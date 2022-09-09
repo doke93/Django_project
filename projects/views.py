@@ -2,38 +2,22 @@ from email import message
 from urllib import request
 from django.shortcuts import render
 from django.http import HttpResponse
-
-projectsList = [
-    {
-        'id': '1',
-        'title': 'Ecommerce Website',
-        'description': 'Fully functional ecommerce website'
-    },
-    {
-        'id': '2',
-        'title': 'Portfolio Website',
-        'description': 'A personal website to write articles and display work'
-    },
-    {
-        'id': '3',
-        'title': 'Social Network',
-        'description': 'An open source project built by the community'
-    }
-]
+from .models import Project
+from .forms import ProjectForm
 
 
 # Create your views here.
 def projects(request):
-    page = 'project'
-    number = 10
-    context = {'page':page, 'number':number, 'projects':projectsList}
+    projects = Project.objects.all()
+    context = {'projects':projects}
     return render(request, 'projects/projects.html', context)
 
 def project(request, pk):
-    projectObj = None
-    for i in projectsList:
-        if i['id'] == pk:
-            projectObj = i
+    projectObj = Project.objects.get(id=pk)
+    return render(request,'projects/single-project.html', {'project':projectObj})
 
-    context = {'project':projectObj}
-    return render(request,'projects/single-project.html', context)
+
+def createProject(requests):
+    form = ProjectForm()
+    context = {'form':form}
+    return render(requests, "projects/project_form.html", context)
